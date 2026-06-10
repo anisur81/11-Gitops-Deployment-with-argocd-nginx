@@ -1,0 +1,2 @@
+# argocdnginx
+argocd-nginx-lab
