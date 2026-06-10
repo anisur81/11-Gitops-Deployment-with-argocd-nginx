@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argonginx-deployment
+  labels:
+    app: argonginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: argonginx
+  template:
+    metadata:
+      labels:
+        app: argonginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
