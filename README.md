@@ -45,10 +45,8 @@ This creates a GitOps-compliant directory structure for managing Kubernetes appl
 
 **Repository Structure:**
 ```
-argocd-gitops/
-└── apps/
-    └── nginx/
-        ├── namespace.yaml
+    /
+    └── main/
         ├── deployment.yaml
         └── service.yaml
 ```
@@ -253,49 +251,6 @@ kubectl scale deployment nginx -n prod --replicas=1
 
 ### 7.2 Observe ArgoCD Auto-Correction
 ArgoCD will automatically detect the drift and restore the deployment back to **2 replicas**, matching the Git-defined desired state .
-
----
-
-## Bonus: App of Apps Pattern
-
-For managing multiple applications at scale, use the **App of Apps** pattern where a parent ArgoCD Application manages multiple child applications .
-
-### Directory Structure
-```
-argocd-gitops/
-├── apps/
-│   └── nginx/              # Child app 1 manifests
-├── argocd/
-│   └── apps/
-│       ├── nginx-app.yaml  # Child Application definition
-│       └── app-of-apps.yaml # Parent Application definition
-```
-
-### Parent Application Manifest
-Create `argocd/apps/app-of-apps.yaml` :
-
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: app-of-apps
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/<YOUR_GITHUB_USERNAME>/argocd-gitops.git
-    targetRevision: HEAD
-    path: argocd/apps
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: argocd
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-```
-
-Apply the parent app, and ArgoCD will automatically create and manage all child applications defined in the `argocd/apps` directory .
 
 ---
 
